@@ -1,8 +1,11 @@
 import React from "react";
 
+import { Tilte } from "./styles";
+
 const Dashbord: React.FC = () => {
 
-    return <h1>Deshbord</h1>;
+    return <Tilte>Explore repositórios
+    no Github.</Tilte>;
 }
 
 export default Dashbord;

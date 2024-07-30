@@ -1,11 +1,11 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter } from 'react-router-dom';
+import Routes from '../src/routes';
 
-function App() {
-  return (
-    <h1>Hello Word</h1>
-  );
-}
+const App: React.FC = () => (
+  <BrowserRouter>
+    <Routes />
+  </BrowserRouter> 
+);
 
 export default App;

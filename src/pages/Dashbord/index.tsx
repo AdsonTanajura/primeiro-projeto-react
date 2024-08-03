@@ -1,7 +1,7 @@
 import React, { useState, FormEvent } from "react";
 import api from "../../services/api";
 
-import { Tilte, Form, Repositories } from "./styles";
+import { Tilte, Form, Repositories, Error } from "./styles";
 import logo from '../../assets/Logo.svg'
 import { FiChevronRight } from 'react-icons/fi'
 
@@ -10,17 +10,29 @@ import Repository from "../Repository";
 
 const Dashbord: React.FC = () => {
     const [ newRepo, setNewRepo ] = useState('');
+    const [inputError, setInputError] = useState('');
     const [ repositories, setRepositories ] = useState<RepositoriesDTO[]>([]);
 
    async function handleAddRepository(event: FormEvent<HTMLFormElement>): Promise<void> {
         event.preventDefault();
 
-        const response = await api.get<RepositoriesDTO>(`repos/${newRepo}`);
+    if(!newRepo) {
+        setInputError('Digite o auto/nome do repositorio')
+        return;
+    }
 
-        const repository = response.data;
+        try {
+            const response = await api.get<RepositoriesDTO>(`repos/${newRepo}`);
 
-        setRepositories([...repositories, repository]);
-        setNewRepo('');
+            const repository = response.data;
+
+            setRepositories([...repositories, repository]);
+            setNewRepo('');
+            setInputError('');
+            
+        } catch (error) {
+            setInputError('Erro na busca por esse repositorio')
+        };
     };
 
     return (
@@ -35,7 +47,7 @@ const Dashbord: React.FC = () => {
                 />
                 <button type="submit">Pesquisar</button>
             </Form>
-
+            { inputError && <Error>{inputError}</Error> }
             <Repositories>
                 {repositories.map(repository => (
                            <a target="_blank" key= {repository.full_name} href={repository.html_url}>

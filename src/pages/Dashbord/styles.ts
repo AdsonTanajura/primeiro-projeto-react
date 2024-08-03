@@ -1,5 +1,9 @@
-import styled from "styled-components";
+import styled, {css} from "styled-components";
 import { shade } from 'polished';
+
+interface FormProps {
+    hasError: boolean;
+}
 
 
 
@@ -13,9 +17,10 @@ export const Tilte = styled.h1`
 
 `;
 
-export const Form = styled.form`
+export const Form = styled.form<FormProps>`
     margin-top: 40px;
     max-width: 700px;
+
     display: flex;
 
     input {
@@ -25,7 +30,15 @@ export const Form = styled.form`
         border: 0;
         border-radius: 5px 0 0 5px;
         color: #a3a3a3;
+        border: 2px solid #FFF;
+        border-right: 0;
 
+        ${
+            (props) => props.hasError && css`
+                border-color: #c53030;
+            `
+        }
+        
         &::placeholder {
             color: #a8a8b3;
         }

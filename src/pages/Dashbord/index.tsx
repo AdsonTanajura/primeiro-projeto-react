@@ -1,4 +1,4 @@
-import React, { useState, FormEvent } from "react";
+import React, { useState, FormEvent, useEffect } from "react";
 import api from "../../services/api";
 
 import { Tilte, Form, Repositories, Error } from "./styles";
@@ -11,7 +11,19 @@ import Repository from "../Repository";
 const Dashbord: React.FC = () => {
     const [ newRepo, setNewRepo ] = useState('');
     const [inputError, setInputError] = useState('');
-    const [ repositories, setRepositories ] = useState<RepositoriesDTO[]>([]);
+    const [ repositories, setRepositories ] = useState<RepositoriesDTO[]>(() => {
+        const storagedRepositories = localStorage.getItem('@GithubExolorer:repositories');
+
+        if (storagedRepositories) {
+            return JSON.parse(storagedRepositories);
+        } else {
+            return [];
+        }
+    });
+
+    useEffect(() => {
+        localStorage.setItem('@GithubExolorer:repositories', JSON.stringify(repositories))
+    }, [repositories])
 
    async function handleAddRepository(event: FormEvent<HTMLFormElement>): Promise<void> {
         event.preventDefault();

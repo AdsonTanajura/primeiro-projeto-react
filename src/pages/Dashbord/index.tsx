@@ -1,12 +1,12 @@
 import React, { useState, FormEvent, useEffect } from "react";
 import api from "../../services/api";
+import { Link } from 'react-router-dom';
 
 import { Tilte, Form, Repositories, Error } from "./styles";
 import logo from '../../assets/Logo.svg'
 import { FiChevronRight } from 'react-icons/fi'
 
 import RepositoriesDTO from "../../interface/Repositories";
-import Repository from "../Repository";
 
 const Dashbord: React.FC = () => {
     const [ newRepo, setNewRepo ] = useState('');
@@ -62,14 +62,14 @@ const Dashbord: React.FC = () => {
             { inputError && <Error>{inputError}</Error> }
             <Repositories>
                 {repositories.map(repository => (
-                           <a target="_blank" key= {repository.full_name} href={repository.html_url}>
+                           <Link key= {repository.full_name} to= {`/repositories/${repository.full_name}`}>
                            <img src={repository.owner.avatar_url} alt={repository.owner.login} />
                            <div>
                                <strong>{repository.name}</strong>
                                <p>{repository.description}</p>
                            </div>
                            <FiChevronRight size={20}/>
-                           </a>
+                           </Link>
            
                 ))}
             </Repositories>

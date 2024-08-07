@@ -1,5 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMatch, Link } from 'react-router-dom';
+import api from "../../services/api";
+import RepositoriesDTO from '../../interface/Repositories';
+import IssueDTO from '../../interface/Issues';
+
 
 import { Header, RepositoryInfo, Issues } from './styles';
 import logo from '../../assets/Logo.svg'
@@ -8,11 +12,20 @@ import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'
 
 
 const Repository: React.FC = () => {
+    const [ repository,setRepository ]  = useState<RepositoriesDTO | null>(null);
+    const [ issues, setIssues ] = useState<IssueDTO[]>([]);
 
     const match = useMatch('/repositories/*');
-
     const repositoryParam = match?.params['*'];
 
+    useEffect(() => {
+        api.get(`repos/${repositoryParam}`).then(response => {
+            setRepository(response.data);
+        })
+        api.get(`repos/${repositoryParam}/issues`).then(response => {
+            setIssues(response.data);
+        })
+    }, [repositoryParam]);
 
 
   return (
@@ -25,38 +38,42 @@ const Repository: React.FC = () => {
             </Link>
         </Header>
 
-        <RepositoryInfo>
-            <header>
-                <img src="https://avatars.githubusercontent.com/u/132403350?v=4" alt="" />
-                <div>
-                    <strong>test-repo</strong>
-                    <p>usando para teste de paragrafo</p>
-                </div>
-            </header>
-            <ul>
-                <li>
-                    <strong>1808</strong>
-                    <span>Stars</span>
-                </li>
-                <li>
-                    <strong>48</strong>
-                    <span>Forks</span>
-                </li>
-                <li>
-                    <strong>67</strong>
-                    <span>Issues</span>
-                </li>
-            </ul>
+        {repository && (
+            <RepositoryInfo>
+                <header>
+                    <img src={repository.owner.avatar_url} alt={repository.owner.login} />
+                    <div>
+                        <strong>{repository.name}</strong>
+                        <p>{repository.description}</p>
+                    </div>
+                </header>
+                <ul>
+                    <li>
+                        <strong>{repository.stargazers_count}</strong>
+                        <span>Stars</span>
+                    </li>
+                    <li>
+                        <strong>{repository.forks_count}</strong>
+                        <span>Forks</span>
+                    </li>
+                    <li>
+                        <strong>{repository.open_issues_count}</strong>
+                        <span>Issues</span>
+                    </li>
+                </ul>
         </RepositoryInfo>
+        )}
 
         <Issues>
-            <Link to= {'qdawdaw'}>
+            {issues.map(issues => (
+                <a key={issues.id} href= {issues.html_url} target='_blank'>
                 <div>
-                    <strong>adawdwad</strong>
-                    <p>adwadawdwa</p>
+                    <strong>{issues.title}</strong>
+                    <p>{issues.user.login}</p>
                 </div>
                 <FiChevronRight size={20}/>
-            </Link>
+            </a>
+            ))}
         </Issues>
     </>
     
